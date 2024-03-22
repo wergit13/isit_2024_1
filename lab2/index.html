@@ -4,24 +4,11 @@
         <link rel="stylesheet" href="library.css">
     </head>
 <body>
-<h1>Books search</h1>
-<div id="all_books">
-
-</div>
-<h1>Any category</h1>
-<div id="any_cat">
-
-</div>
-
-
-<h1>Enter category</h1>
-<div class="inputs">
-    <input id="category" type="text" id="name" name="name"/>
-    <button id="button" >find</button>
-</div>
-
-<library id="cat"></library>
+<root>
+    <h1>Loadding ...</h1>
+</root>
 <script>
+    const root = document.body.querySelector('root');
 
     function getXmlFile(str) {
         const req = new XMLHttpRequest();
@@ -29,52 +16,52 @@
         req.send();
         return req;
     }
+    const main = () => {
 
-    (() => {
-        const resp = getXmlFile('library.xml');
-        if(resp.status != 200) {
-            cat.innerHTML = "Document not found";
-            return;
-        }
-
-        const ser = new XMLSerializer();
-        const arr = Array(...resp.responseXML.querySelectorAll('book')).map((el)=>ser.serializeToString(el));
-        document.getElementById('all_books').innerHTML = arr.join('');
-        
-        document.getElementById('any_cat').innerHTML = 
-        ser.serializeToString(resp.responseXML.querySelector('category'))
-        
-    })();
-
-    function getCategory(resp, categoryName) {
-        const all = resp.querySelectorAll('category');
-        for (const category of all) {
-            const nameTag = category.querySelector('name');
-            if (nameTag && nameTag.textContent.trim() === categoryName) {
-            return category;
-            }
-        }
-        return null;
+    const resp = getXmlFile('library.xml');
+    if(resp.status != 200) {
+        root.innerHTML = "<h1>library.xml not found</h1>";
+        return;
     }
+    const books = Array(...resp.responseXML.querySelectorAll('book'));
+    root.innerHTML = `<h1>Search books</h1>
+        <form id="form">
+            <input id="category" type="text" placeholder="author or title" id="name" name="name"/>
+            <button type="summit" id="button" >find</button>
+        </div>
+
+        <library id="cat"></library>`;
     
     const input = document.getElementById('category');
     const cat = document.getElementById('cat');
 
-    document.getElementById("button").addEventListener("click", ()=>
+    let printBooks = (books) => {
+        const ser = new XMLSerializer();
+        cat.innerHTML = books.map((book) => ser.serializeToString(book)).join('');
+    };
+
+    document.getElementById("form").addEventListener("submit", (e)=>
     {
-        const resp = getXmlFile('library.xml');
-        if(resp.status != 200) {
-            cat.innerHTML = "Document not found";
+        e.preventDefault();
+        const query = input.value.trim();
+        if (query === '') {
+            cat.innerHTML = "Empty query";
             return;
         }
-        const cat = getCategory(resp.responseXML, input.value);
-        if(!cat) {
-            cat.innerHTML = "Category not found";
-        } else {
-            cat.innerHTML = new XMLSerializer().serializeToString(cat); cat;
+        const searchResult = books.filter((book) => 
+            book.querySelector("title").innerHTML.toLocaleLowerCase().includes(query) ||
+            book.querySelector("author").innerHTML.toLocaleLowerCase().includes(query)
+        );
+        if ( searchResult.length == 0) {
+            cat.innerHTML = "Nothing have found";
+            return;
         }
-
+        printBooks(searchResult);
     });
+
+    };
+
+    main();
 </script>
 </body>
 </html>

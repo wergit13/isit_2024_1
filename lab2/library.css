@@ -6,9 +6,10 @@ books {
 }
 
 library {
+    margin-top: 10px;
     flex-direction: column;
     display: flex;
-    gap: 3rem;
+    gap: 1rem;
 }
 
 .inputs{
