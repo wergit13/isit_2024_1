@@ -7,7 +7,6 @@ books {
 }
 
 library {
-    background-image: url("lib.jpeg");
     flex-direction: column;
     display: flex;
     gap: 3rem;
