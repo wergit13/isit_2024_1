@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="library.css">
+    </head>
+<body>
+<h1>Books search</h1>
+<div id="all_books">
+
+</div>
+<h1>Any category</h1>
+<div id="any_cat">
+
+</div>
+
+
+<h1>Enter category</h1>
+<div class="inputs">
+    <input id="category" type="text" id="name" name="name"/>
+    <button id="button" >find</button>
+</div>
+
+<library id="cat"></library>
+<script>
+
+    function getXmlFile(str) {
+        const req = new XMLHttpRequest();
+        req.open('GET', str, false);
+        req.send();
+        return req;
+    }
+
+    (() => {
+        const resp = getXmlFile('library.xml');
+        if(resp.status != 200) {
+            cat.innerHTML = "Document not found";
+            return;
+        }
+
+        const ser = new XMLSerializer();
+        const arr = Array(...resp.responseXML.querySelectorAll('book')).map((el)=>ser.serializeToString(el));
+        document.getElementById('all_books').innerHTML = arr.join('');
+        
+        document.getElementById('any_cat').innerHTML = 
+        ser.serializeToString(resp.responseXML.querySelector('category'))
+        
+    })();
+
+    function getCategory(resp, categoryName) {
+        const all = resp.querySelectorAll('category');
+        for (const category of all) {
+            const nameTag = category.querySelector('name');
+            if (nameTag && nameTag.textContent.trim() === categoryName) {
+            return category;
+            }
+        }
+        return null;
+    }
+    
+    const input = document.getElementById('category');
+    const cat = document.getElementById('cat');
+
+    document.getElementById("button").addEventListener("click", ()=>
+    {
+        const resp = getXmlFile('library.xml');
+        if(resp.status != 200) {
+            cat.innerHTML = "Document not found";
+            return;
+        }
+        const cat = getCategory(resp.responseXML, input.value);
+        if(!cat) {
+            cat.innerHTML = "Category not found";
+        } else {
+            cat.innerHTML = new XMLSerializer().serializeToString(cat); cat;
+        }
+
+    });
+</script>
+</body>
+</html>
+

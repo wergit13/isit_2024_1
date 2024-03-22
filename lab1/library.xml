@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/css" href="library.css"?>
+<library>
+    <category>
+        <name>Fiction</name>
+        <books>
+            <book>
+                <title>1984</title>
+                <author>George Orwell</author>
+                <year>1949</year>
+                <language>English</language>
+            </book>
+            <book>
+                <title>Brave New World</title>
+                <author>Aldous Huxley</author>
+                <year>1932</year>
+                <language>English</language>
+            </book>
+        </books>
+    </category>
+    <category>
+        <name>Science</name>
+        <books>
+            <book>
+                <title>A Brief History of Time</title>
+                <author>Stephen Hawking</author>
+                <year>1988</year>
+                <language>English</language>
+            </book>
+            <book>
+                <title>The Selfish Gene</title>
+                <author>Richard Dawkins</author>
+                <year>1976</year>
+                <language>English</language>
+            </book>
+        </books>
+    </category>
+    <category>
+        <name>History</name>
+        <books>
+            <book>
+                <title>Sapiens: A Brief History of Humankind</title>
+                <author>Yuval Noah Harari</author>
+                <year>2011</year>
+                <language>English</language>
+            </book>
+            <book>
+                <title>Guns, Germs, and Steel</title>
+                <author>Jared Diamond</author>
+                <year>1997</year>
+                <language>English</language>
+            </book>
+        </books>
+    </category>
+</library>
