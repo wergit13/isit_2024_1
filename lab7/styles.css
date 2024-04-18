@@ -1,0 +1,27 @@
+.message {
+    background-color: white;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.message img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+    display: inline-block;
+}
+
+.message .info {
+    display: inline-block;
+}
+
+.message .name {
+    font-weight: bold;
+}
+
+.message .date {
+    color: #888;
+}
