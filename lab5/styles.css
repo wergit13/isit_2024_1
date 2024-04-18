@@ -1,0 +1,36 @@
+table {
+    text-align: center;
+    border-collapse: collapse;
+    table-layout: fixed;
+    width: 100%;
+    border: 3px solid #3498db;
+}
+
+.app {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.input-groups-number {
+    width: 200px;
+    padding: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+}
+
+.button-groups-number {
+    background-color: #3498db;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    cursor: pointer;
+}
+
+.groups {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #ccc;
+}

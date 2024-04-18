@@ -23,7 +23,7 @@ function vkApiRequest(method, params) {
     return jsonpRequest(url);
 }
 
-function showFriedns(friends) {
+function showFriedns(root, friends) {
     friends = friends.map((u) => {
         return `<tr>
             <td>${u.photo_50 ? `<img src=${u.photo_50}></img>`: "-"}</td>
@@ -33,7 +33,7 @@ function showFriedns(friends) {
             <td>${u.city?.title ? u.city?.title : "-"}</td>
         </tr>`   
     }).join('');
-    root.innerHTML = `<h1>My friends</h1><table>
+    root.innerHTML = `<table>
     <tr>
         <th>Photo</th>
         <th>Name</th>
@@ -47,9 +47,34 @@ function showFriedns(friends) {
 
 const p = vkApiRequest("friends.get", {user_id: myVkId, fields: "bdate,city,education,photo_50"});
 
+function startApp(items) {
+    const friends = items;
+    root.innerHTML = `
+        <h1>Friends search</h1>
+        <input id="search" type="text" placeholder="friend name"/>
+        <div id="friends"></div>
+    `;
+
+    const input = document.getElementById("search");
+    const showArea = document.getElementById("friends");
+    
+    input.addEventListener("change", (e) => {
+        const query = e.target.value.trim().toLocaleLowerCase();
+        if (query === '') {
+            return;
+        }
+
+        showFriedns(showArea, friends.filter((f)=> {
+            const name = f.first_name.toLocaleLowerCase();
+            const sname = f.last_name.toLocaleLowerCase();
+            return name.includes(query) || sname.includes(query) || (`${name} ${sname}`).includes(query.split(" ").join(" "));
+        }));
+    });
+}
+
 p.then((data) => {
     if ( data.error !== undefined ) {
         root.innerHTML = "<h1>Fetch error</h1>"
     }
-    showFriedns(data.response.items);
+    startApp(data.response.items);
 });

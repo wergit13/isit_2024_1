@@ -3,3 +3,25 @@ th, td {
     text-align: center;
     padding: 4px;
 }
+
+table{
+    width: 50%;
+}
+
+div{
+    width: min-content;
+}
+
+.cont{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.selected{
+    background-color: pink;
+}
+
+input, textarea {
+    width: 200px;
+}
