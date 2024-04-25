@@ -8,6 +8,14 @@ bot = telebot.TeleBot(botToken)
 like_count = 0
 dislike_count = 0
 
+def create_likes_keyboard():
+    global like_count
+    global dislike_count
+    markup = types.InlineKeyboardMarkup()
+    button_like = types.InlineKeyboardButton(f"I like({like_count})", callback_data="like")
+    button_dislike = types.InlineKeyboardButton(f"I don't like({dislike_count})", callback_data="dislike")
+    markup.add(button_like, button_dislike)
+
 @bot.message_handler(commands=['start'])
 def start(message):
     markup = types.InlineKeyboardMarkup()
@@ -22,10 +30,12 @@ def callback_inline(call):
     if call.data == "like":
         global like_count
         like_count += 1
-        bot.answer_callback_query(callback_query_id=call.id, text=f"Likes: {like_count}")
     elif call.data == "dislike":
         global dislike_count
         dislike_count += 1
-        bot.answer_callback_query(callback_query_id=call.id, text=f"Dislikes: {dislike_count}")
+    bot.edit_message_text(text=call.message.text,
+            chat_id=call.message.chat.id,
+            message_id=call.message.message_id,
+            reply_markup=create_likes_keyboard())
 
 bot.polling()
