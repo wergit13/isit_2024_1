@@ -3,7 +3,7 @@ import { botToken } from "/secrets.js";
 let lastEvent = 0;
 
 async function updateMessageList(){
-    await fetch(`https://api.telegram.org/bot${botToken}/getUpdates?timeout=2&offset=${lastEvent+1}`)
+    await fetch(`https://api.telegram.org/bot${botToken}/getUpdates?timeout=10&offset=${lastEvent+1}`)
         .then(response => response.json())
         .then(async function (data) {
             const message_сontainer = document.querySelector(".message-container");
@@ -36,6 +36,7 @@ async function updateMessageList(){
                 if (typeof user_photo !== "undefined") {
                     const image = document.createElement("img");
                     image.src = user_photo;
+                    image.classList.add("avatar")
                     message_div.appendChild(image);
                 }
             
@@ -43,8 +44,51 @@ async function updateMessageList(){
                 text_div.innerHTML = `
                     <p class="name"><strong>${user_name}</strong></p>
                     <p class="date">${date}</p>
-                    <p class="info">${text}</p>
                 `;
+
+                if(text !== undefined ) {
+                    const mess  = document.createElement("p")
+                    mess.classList.add("info");
+                    mess.innerHTML = text;
+                    text_div.appendChild(mess)
+                }
+
+                if(message.animation !== undefined ) {
+                    const gif  = document.createElement("video")
+                    gif.autoplay = true;
+                    gif.loop = true;
+                    gif.classList.add("info");
+                    gif.src = await (get_file(message.animation.file_id));
+                    text_div.appendChild(gif);
+                }
+
+                if(message.photo !== undefined ) {
+                    const photo  = document.createElement("img")
+                    photo.classList.add("info");
+                    photo.src = await (get_file(message.photo[message.photo.length - 1].file_id));
+                    text_div.appendChild(photo);
+                }
+
+                if(message.sticker !== undefined ) {
+                    const photo  = document.createElement("img")
+                    photo.classList.add("info");
+                    photo.src = await (get_file(message.sticker.thumbnail.file_id));
+                    text_div.appendChild(photo);
+                }
+
+
+                if(message.document !== undefined ) {
+                    const photo  = document.createElement("a")
+                    photo.classList.add("info");
+                    photo.download = message.document.file_name;
+                    photo.href = await (get_file(message.document.file_id));
+                    photo.innerText = `Download "${message.document.file_name}"`;
+                    text_div.appendChild(photo);
+                }
+
+
+
+
                 message_div.appendChild(text_div);
             
                 message_сontainer.appendChild(message_div);

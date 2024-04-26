@@ -6,12 +6,16 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.message img {
+.message .avatar {
     width: 50px;
     height: 50px;
     border-radius: 50%;
     margin-right: 10px;
     display: inline-block;
+}
+
+img.info {
+    width: 300px;
 }
 
 .message .info {

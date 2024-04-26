@@ -21,8 +21,8 @@ function createCsvBlob(data) {
     };
 
     var csvFile = '';
-    for (var i = 0; i < rows.length; i++) {
-        csvFile += processRow(rows[i]);
+    for (var i = 0; i < data.length; i++) {
+        csvFile += processRow(data[i]);
     }
 
     return new Blob([csvFile], { type: 'text/csv;charset=utf-8;' });
@@ -84,7 +84,7 @@ function addDownloadButton(groupArr) {
         const blobURL = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = blobURL;
-        a.download = suggestedName;
+        a.download = "mygroups.csv";
         a.style.display = 'none';
         document.body.append(a);
         a.click();

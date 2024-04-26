@@ -53,12 +53,13 @@
             book.querySelector("author").innerHTML.toLocaleLowerCase().includes(query)
         );
 
-        const sorted = books.sort((b1, b2) => b1.querySelector("year").innerHTML < b2.querySelector("year").innerHTML);
-
         if ( searchResult.length == 0) {
             cat.innerHTML = "Nothing have found";
             return;
         }
+
+        const sorted = searchResult.sort((b1, b2) => b1.querySelector("year").innerHTML < b2.querySelector("year").innerHTML);
+
         printBooks(sorted);
     });
 
