@@ -4,55 +4,34 @@ from telebot import types
 from secret import botToken
 
 bot = telebot.TeleBot(botToken)
-dictionary1 = {
-    "Spring":0, "Summer":0
-}
 
-dictionary2 = {
-    "Vanilla":0, "Chocolate":0
-}
+from telegram.ext import (Updater, CommandHandler, MessageHandler,
+                          filters, ConversationHandler)
+from telegram.ext import CallbackQueryHandler, Application
+from telegram import Bot, Update
 
-def dictToStr(d):
-    return "\n\r".join([f"{key}: {value}" for (key,value) in d.items()])
 
-@bot.message_handler(commands=['start'])
-def start(message):
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    item1 = types.KeyboardButton("Question 1")
-    item2 = types.KeyboardButton("Question 2")
-    markup.add(item1, item2)
+from conversations import ConvStates, BotConversations
+from asyncio import Queue
 
-    bot.send_message(message.chat.id, "Choose a question:", reply_markup=markup)
+def main() -> None:
+    conv = BotConversations()
+    application = Application.builder().token(botToken).build()
 
-@bot.message_handler(func=lambda message: True)
-def echo_all(message):
-    if message.text == "Question 1":
-        markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-        item3 = types.KeyboardButton("Spring")
-        item4 = types.KeyboardButton("Summer")
-        markup.add(item3, item4)
+    # Add conversation handler with the states GENDER, PHOTO, LOCATION and BIO
+    conv_handler = ConversationHandler(
+        entry_points=[CommandHandler('start', conv.handler_start)],
+        states={
+            ConvStates.ANSWER: [MessageHandler(filters.Text(), conv.handler_answer)]
+        },
+        fallbacks=[CommandHandler('cancel', conv.handler_cancel)]
+    )
 
-        bot.send_message(message.chat.id, "What do you prefer?", reply_markup=markup)
+    application.add_handler(conv_handler)
+    application.add_handler(CommandHandler('stat', conv.handler_stat))
+    
+    application.run_polling(allowed_updates=Update.ALL_TYPES)
 
-    elif message.text == "Question 2":
-        markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-        item5 = types.KeyboardButton("Vanilla")
-        item6 = types.KeyboardButton("Chocolate")
-        markup.add(item5, item6)
 
-        bot.send_message(message.chat.id, "What kind of ice cream do you like?", reply_markup=markup)
-
-    elif message.text in dictionary1:
-        dictionary1[message.text] += 1
-        bot.send_message(message.chat.id, f"You chose: {message.text}", reply_markup=types.ReplyKeyboardRemove())
-        bot.send_message(message.chat.id, dictToStr(dictionary1))
-
-    elif message.text in dictionary2:
-        dictionary2[message.text] += 1
-        bot.send_message(message.chat.id, f"You chose: {message.text}", reply_markup=types.ReplyKeyboardRemove())
-        bot.send_message(message.chat.id, dictToStr(dictionary2))
-
-    else:
-        bot.send_message(message.chat.id, "I didn't understand that.")
-
-bot.polling()
+if __name__ == "__main__":
+    main()
