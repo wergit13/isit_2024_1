@@ -1,5 +1,6 @@
 import { Methods, vkApiRequest } from "./vk_api.js";
 import { myVkId } from "../secrets.js";
+import { data } from "./data.js";
 
 
 function createCsvBlob(data) {
@@ -47,7 +48,7 @@ function showGroups(root, groups) {
     ${gr}
     </table>`;
     root.innerHTML = str;
-}
+} 
 
 function addDownloadButton(groupArr) {
     const button = document.createElement("button")
@@ -81,7 +82,27 @@ function addDownloadButton(groupArr) {
                 }
             }
         }
-        const blobURL = URL.createObjectURL(blob);
+        
+    });
+}
+
+function processItem(item) {
+    const params = item.querySelectorAll(".newsitem__param");
+    return [
+        params[0].dateTime,
+        params[1].innerText,
+        item.querySelector(".newsitem__title-inner").innerText,
+        item.querySelector(".newsitem__text").innerText,
+        item.querySelector(".newsitem__title").href
+    ];
+}
+
+function process(count) {
+    const root = document.createElement("div")
+    root.innerHTML = data;
+    const news = Array.from(root.querySelectorAll(".newsitem"))
+    const aggregated_news = news.map((item) => processItem(item));
+    const blobURL = URL.createObjectURL(createCsvBlob(aggregated_news));
         const a = document.createElement('a');
         a.href = blobURL;
         a.download = "mygroups.csv";
@@ -91,31 +112,7 @@ function addDownloadButton(groupArr) {
         setTimeout(() => {
             URL.revokeObjectURL(blobURL);
             a.remove();
-        }, 1000);
-    });
-}
-
-async function process(count) {
-    const root = document.querySelector('.app');
-    const friendsField = document.querySelector(".friends");
-    friendsField.innerHTML = "loading...";
-    try {
-        const resp = await vkApiRequest(Methods.getGroups, {user_id: myVkId, extended:1, count:count, fields: "members_count,photo_50"});
-        const groups = resp.items;
-        const promises = groups.map(group => {
-            return vkApiRequest(Methods.getMembers, {group_id: group.id, filter:"friends"})
-            .then((resp) => {group.friends_count  = resp.items.length; return group})
-            .catch((err) => {console.log(err); return null});
-        });
-        const friendsWithData = await Promise.all(promises);
-        const result = friendsWithData.filter(e => e!=null).sort((f1, f2) => f2.friends_count - f1.friends_count)
-        showGroups(friendsField, result);
-        addDownloadButton(result)
-    } catch (err) {
-        console.log(err);
-        friendsField.innerHTML = "error: " + err.error_msg;
-        return;
-    }
+        }, 1000);    
 }
 
 const main = async ()=> {
