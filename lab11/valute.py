@@ -1,5 +1,6 @@
 import requests
 import xml.dom.minidom as xml
+import datetime
 
 def getInnerText(node):
     rc = []
@@ -20,3 +21,13 @@ def getCourse(currencyCode, date):
             return float(getInnerText(cur.getElementsByTagName("Value")[0]).replace(',', '.'))
         
     raise Exception("No such currency")
+
+def getAverageLastDays(currencyCode, days):
+    date = datetime.datetime.now()
+    delta = datetime.timedelta(days=1)
+    s = float(0)
+    for _ in range(days):
+        s += getCourse(currencyCode, date)
+        date -= delta
+    return s/days
+
